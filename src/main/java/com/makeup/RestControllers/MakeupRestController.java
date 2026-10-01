@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.makeup.entities.Makeup;
 import com.makeup.service.MakeupService;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 
+@AllArgsConstructor
 @RestController
 @CrossOrigin
 public class MakeupRestController {
@@ -27,6 +30,11 @@ public class MakeupRestController {
     @GetMapping("/api")
     public List<Makeup> getAllMakeups() {
         return makeupService.getAllMakeups();
+    }
+
+    @GetMapping("/api/{id}")
+    public Makeup getProduitById(@PathVariable("id") Long id) {
+        return makeupService.getMakeup(id);
     }
 
 

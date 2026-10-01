@@ -43,7 +43,14 @@ public class MakeupRestController {
     @RequestMapping(method = RequestMethod. POST)
     public Makeup createProduit(@RequestBody Makeup makeup) {
         return makeupService.saveMakeup(makeup);
-    }   
+    }   //test postman on enleve id +date + categorie et ces attributs
 
-    
+
+    @RequestMapping(method = RequestMethod.PUT) //put pour update
+    public Makeup updateProduit(@RequestBody Makeup makeup) {
+    return makeupService.updateMakeup(makeup);
+}
+
+
+
 }

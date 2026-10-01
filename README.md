@@ -16,6 +16,8 @@ mvn spring-boot:run
 
 Le serveur demarre sur `http://localhost:8081`.
 
+Pour afficher tous les maquillages, utiliser `http://localhost:8081/api`.
+
 ## Connecter MySQL XAMPP
 
 1. Demarrer MySQL dans XAMPP.
@@ -24,4 +26,4 @@ Le serveur demarre sur `http://localhost:8081`.
 
 Les valeurs peuvent etre surchargees avec `DB_URL`, `DB_USERNAME` et `DB_PASSWORD`.
 
-Les endpoints REST pourront ensuite etre ajoutes dans `src/main/java/com/makeup` et le frontend pourra consommer l'API sur le port `8080`.
+Les endpoints REST pourront ensuite etre ajoutes dans `src/main/java/com/makeup` et le frontend pourra consommer l'API sur le port `8081`.

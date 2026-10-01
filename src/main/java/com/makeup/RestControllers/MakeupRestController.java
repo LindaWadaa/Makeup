@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.makeup.entities.Makeup;
@@ -12,6 +11,8 @@ import com.makeup.service.MakeupService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @AllArgsConstructor
 @RestController
@@ -39,7 +40,7 @@ public class MakeupRestController {
         return makeupService.getMakeup(id);
     }
 
-    @PostMapping("/api")
+    @RequestMapping(method = RequestMethod. POST)
     public Makeup createProduit(@RequestBody Makeup makeup) {
         return makeupService.saveMakeup(makeup);
     }   

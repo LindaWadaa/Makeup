@@ -1,0 +1,9 @@
+target/
+bin/
+src/bin/
+.tools/
+*.log
+.idea/
+*.iml
+.vscode/
+application-local.properties

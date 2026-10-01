@@ -1,0 +1,34 @@
+package com.makeup.RestControllers;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.makeup.entities.Makeup;
+import com.makeup.service.MakeupService;
+
+@RestController
+@CrossOrigin
+public class MakeupRestController {
+
+    private final MakeupService makeupService;
+
+    public MakeupRestController(MakeupService makeupService) {
+        this.makeupService = makeupService;
+    }
+
+    @GetMapping("/")
+    public String health() {
+        return "Makeup API is running";
+    }
+
+    @GetMapping("/api")
+    public List<Makeup> getAllMakeups() {
+        return makeupService.getAllMakeups();
+    }
+
+
+    
+}

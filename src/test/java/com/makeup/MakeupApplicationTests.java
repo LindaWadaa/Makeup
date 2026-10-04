@@ -25,9 +25,10 @@ class MakeupApplicationTests {
     @Test   
     public void testCreateMakeup() {
         Categorie categorie = categorieRepository.save(
-            new Categorie("Yeux", "Produits pour le maquillage des yeux"));
-        Makeup prod3 = new Makeup("Palette", categorie, "Urban Decay", "Palette de 12 fards nudes", 52.00, LocalDate.of(2028, 9, 10));
-        makeupRepository.save(prod3);  //save dans la base de données
+        new Categorie("Sourcils", "Produits de définition pour les sourcils"));
+    
+        Makeup prod6 = new Makeup("Gel sourcils", categorie, "Anastasia Beverly Hills", "Gel teinté fixateur longue tenue", 32.00, LocalDate.of(2029, 3, 15));
+        makeupRepository.save(prod6);  //save dans la base de données
     }
 
 

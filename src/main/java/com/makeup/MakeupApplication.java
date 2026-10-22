@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 
 import com.makeup.entities.Makeup;
+import com.makeup.entities.Categorie;
 @SpringBootApplication
 public class MakeupApplication implements CommandLineRunner {
 
@@ -21,7 +22,7 @@ public class MakeupApplication implements CommandLineRunner {
 
     @Override
     public void run(String ... args) throws Exception {
-    repositoryRestConfiguration.exposeIdsFor(Makeup.class); //pour voir id lors du test //pour voir id lors du test
+    repositoryRestConfiguration.exposeIdsFor(Makeup.class,Categorie.class); //pour voir id lors du test //pour voir id lors du test
 }
 
 }

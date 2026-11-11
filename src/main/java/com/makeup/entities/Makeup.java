@@ -17,22 +17,20 @@ public class Makeup {
     private Long id;
 
     private String nom;
-    private String marque;
     private double price;
     private String description;
     private LocalDate dateExpiration;
 
     @ManyToOne
-    @JoinColumn(name = "categorie_id")
-    private Categorie categorie;
+    @JoinColumn(name = "marque_id")
+    private Marque marque;
 
     public Makeup() {
     }
 
-    public Makeup(String nom, Categorie categorie, String marque, String description, double price
+    public Makeup(String nom, Marque marque, String description, double price
                   , LocalDate dateExpiration) {
         this.nom = nom;
-        this.categorie = categorie;
         this.marque = marque;
         this.description = description;
         this.price = price;
@@ -51,12 +49,12 @@ public class Makeup {
         this.nom = nom;
     }
 
-    public Categorie getCategorie() {
-        return categorie;
+    public Marque getMarque() {
+        return marque;
     }
 
-    public void setCategorie(Categorie categorie) {
-        this.categorie = categorie;
+    public void setMarque(Marque marque) {
+        this.marque = marque;
     }
 
     public String getDescription() {
@@ -75,14 +73,6 @@ public class Makeup {
         this.price = price;
     }
 
-    public String getMarque() {
-        return marque;
-    }   
-
-    public void setMarque(String marque) {
-        this.marque = marque;
-    }   
-
     public LocalDate getDateExpiration() {
         return dateExpiration;
     }
@@ -96,7 +86,7 @@ public class Makeup {
         return "Makeup{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
-                ", marque='" + marque + '\'' +
+                ", marque=" + marque +
                 ", price=" + price +
                 ", description='" + description + '\'' +
                 ", dateExpiration=" + dateExpiration +

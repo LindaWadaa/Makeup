@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.makeup.entities.Categorie;
+import com.makeup.entities.Marque;
 import com.makeup.entities.Makeup;
-import com.makeup.repos.CategorieRepository;
+import com.makeup.repos.MarqueRepository;
 import com.makeup.repos.MakeupRepository;
-
 
 @SpringBootTest
 class MakeupApplicationTests {
@@ -20,22 +19,21 @@ class MakeupApplicationTests {
     private MakeupRepository makeupRepository;
 
     @Autowired
-    private CategorieRepository categorieRepository;
-    
-    @Test   
+    private MarqueRepository marqueRepository;
+
+    @Test
     public void testCreateMakeup() {
-        Categorie categorie = categorieRepository.save(
-        new Categorie("Sourcils", "Produits de définition pour les sourcils"));
-    
-        Makeup prod6 = new Makeup("Gel sourcils", categorie, "Anastasia Beverly Hills", "Gel teinté fixateur longue tenue", 32.00, LocalDate.of(2029, 3, 15));
-        makeupRepository.save(prod6);  //save dans la base de données
+        Marque marque = marqueRepository.save(
+                new Marque("Anastasia Beverly Hills", "Marque de makeup de maquillage"));
+
+        Makeup makeup6 = new Makeup("Gel sourcils", marque, "Gel teinté fixateur longue tenue", 32.00,
+                LocalDate.of(2029, 3, 15));
+        makeupRepository.save(makeup6);
     }
-
-
 
     @Test
     public void testFindMakeup() {
-        Makeup p = makeupRepository.findById(1L).get(); //L : type long
+        Makeup p = makeupRepository.findById(1L).get();
         System.out.println(p);
     }
 
@@ -55,96 +53,68 @@ class MakeupApplicationTests {
     @Test
     public void testListerTousMakeup() {
         List<Makeup> p = makeupRepository.findAll();
-        for (Makeup prod : p) {
-            System.out.println(prod);
+        for (Makeup makeup : p) {
+            System.out.println(makeup);
         }
     }
-
 
     @Test
     public void testFindByNom() {
         List<Makeup> p = makeupRepository.findByNom("Palette");
-        for (Makeup prod : p) {
-            System.out.println(prod);
+        for (Makeup makeup : p) {
+            System.out.println(makeup);
         }
     }
 
     @Test
     public void testFindByNomContains() {
         List<Makeup> p = makeupRepository.findByNomContains("P");
-        for (Makeup prod : p) {
-            System.out.println(prod);
+        for (Makeup makeup : p) {
+            System.out.println(makeup);
         }
     }
-
 
     @Test
     public void testFindByNomPrix() {
         List<Makeup> p = makeupRepository.findByNomPrix("Yeux", 52.00);
         System.out.println("Nombre de resultats : " + p.size());
-        for (Makeup prod : p) {
-            System.out.println(prod);
+        for (Makeup makeup : p) {
+            System.out.println(makeup);
         }
     }
 
-
-
     @Test
-    public void testfindByCategorie(){
-        Categorie cat = new Categorie();
-        cat.setIdcat(1L);
+    public void testfindByMarque() {
+        Marque marque = new Marque();
+        marque.setIdmarque(1L);
 
-        List<Makeup> p = makeupRepository.findByCategorie(cat);
-        for (Makeup prod : p) {
-            System.out.println(prod);
+        List<Makeup> p = makeupRepository.findByMarque(marque);
+        for (Makeup makeup : p) {
+            System.out.println(makeup);
         }
     }
 
-
     @Test
-    public void findByCategorieIdCat(){
-        List<Makeup> prods = makeupRepository.findByCategorie_Id(1L);
-        for (Makeup p : prods){            System.out.println(p);
+    public void findByMarqueIdMarque() {
+        List<Makeup> makeups = makeupRepository.findByMarque_Id(1L);
+        for (Makeup p : makeups) {
+            System.out.println(p);
         }
     }
 
-
-
     @Test
-    public void testFindByOrderByNomAsc(){
-
-    List<Makeup> prods =
-    makeupRepository.findByOrderByNomAsc();
-    for (Makeup p : prods){
-
-    System.out.println(p);}
+    public void testFindByOrderByNomAsc() {
+        List<Makeup> makeups = makeupRepository.findByOrderByNomAsc();
+        for (Makeup p : makeups) {
+            System.out.println(p);
+        }
     }
 
-
-
-
     @Test
-    public void testTrierProduitsNomsPrix(){
-
-    List<Makeup> prods = makeupRepository.trierProduitsNomsPrix();
-        for (Makeup p : prods)
-        System.out.println(p);
-
-
-
+    public void testTrierMakeupNomsPrix() {
+        List<Makeup> makeups = makeupRepository.trierMakeupNomsPrix();
+        for (Makeup p : makeups) {
+            System.out.println(p);
+        }
+    }
 }
-
-
-
-
-
-
-
-
-}
-
-
-
-
-
-    

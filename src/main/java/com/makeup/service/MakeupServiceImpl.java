@@ -3,8 +3,9 @@ package com.makeup.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
-import com.makeup.entities.Categorie;
+import com.makeup.entities.Marque;
 import com.makeup.entities.Makeup;
 import com.makeup.repos.MakeupRepository;
 
@@ -17,10 +18,18 @@ public class MakeupServiceImpl implements MakeupService {
         this.makeupRepository = makeupRepository;
     }
 
+
+
+
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Override
     public Makeup saveMakeup(Makeup makeup) {
         return makeupRepository.save(makeup);
     }
+
+
+
 
     @Override
     public Makeup updateMakeup(Makeup makeup) {
@@ -63,13 +72,13 @@ public class MakeupServiceImpl implements MakeupService {
     }
 
     @Override
-    public List<Makeup> findByCategorie(Categorie categorie) {
-        return makeupRepository.findByCategorie(categorie);
+    public List<Makeup> findByMarque(Marque marque) {
+        return makeupRepository.findByMarque(marque);
     }
 
     @Override
-    public List<Makeup> findByCategorieIdCat(Long id) {
-        return makeupRepository.findByCategorie_Id(id);
+    public List<Makeup> findByMarqueIdMarque(Long id) {
+        return makeupRepository.findByMarque_Id(id);
     }
 
     @Override
@@ -79,6 +88,6 @@ public class MakeupServiceImpl implements MakeupService {
 
     @Override
     public List<Makeup> trierMakeupNomsPrix() {
-        return makeupRepository.trierProduitsNomsPrix();
+        return makeupRepository.trierMakeupNomsPrix();
     }
 }

@@ -9,19 +9,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
 
 @Data
-
 @NoArgsConstructor
-
 @AllArgsConstructor
-
 @Entity
-public class Categorie {
+@Table(name = "marque")
+public class Marque {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,25 +28,23 @@ public class Categorie {
     private String nom;
     private String description;
 
-    @OneToMany(mappedBy = "categorie") 
+    @OneToMany(mappedBy = "marque")
     @JsonIgnore
-    private List<Makeup> makeups ;
+    private List<Makeup> makeups;
 
-    public Categorie() {
+    public Marque() {
     }
 
-    public Categorie(String nom, String description) {
+    public Marque(String nom, String description) {
         this.nom = nom;
         this.description = description;
     }
 
-    public Long getIdcat() {
+    public Long getId() {
         return id;
     }
 
-
-
-    public void setIdcat(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -68,11 +64,8 @@ public class Categorie {
         this.description = description;
     }
 
-    public List<Makeup> getMakeups() {
-        return makeups;
+    public void setIdmarque(Long id) {
+        this.id = id;
     }
 
-    public void setMakeups(List<Makeup> makeups) {
-        this.makeups = makeups;
-    }
 }

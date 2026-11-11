@@ -3,18 +3,20 @@ package com.makeup.RestControllers;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.makeup.entities.Makeup;
 import com.makeup.service.MakeupService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 @AllArgsConstructor
 @RestController
@@ -28,59 +30,52 @@ public class MakeupRestController {
         this.makeupService = makeupService;
     }
 
-    @GetMapping("/api/health")
+    @GetMapping("/health")
     public String health() {
         return "Makeup API is running";
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allmakeups")
     public List<Makeup> getAllMakeups() {
         return makeupService.getAllMakeups();
     }
 
-    @GetMapping("/{id}")
-    public Makeup getProduitById(@PathVariable("id") Long id) {
+    @GetMapping("/getmakeupbyname/{nom}")
+    public List<Makeup> findByNomMakeupContains(@PathVariable("nom") String nom) {
+        return makeupService.findByNomMakeupContains(nom);
+    }
+
+    @GetMapping("/getmakeup/{id}")
+    public Makeup getMakeupById(@PathVariable("id") Long id) {
         return makeupService.getMakeup(id);
     }
 
-    @RequestMapping(method = RequestMethod. POST)
-    public Makeup createProduit(@RequestBody Makeup makeup) {
+
+
+
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/addmakeup")
+    public Makeup createMakeup(@RequestBody Makeup makeup) {
         return makeupService.saveMakeup(makeup);
-    }   //test postman on enleve id +date + categorie et ces attributs
+    }
 
 
 
+    
 
+    @PutMapping("/updatemakeup")
+    public Makeup updateMakeup(@RequestBody Makeup makeup) {
+        return makeupService.updateMakeup(makeup);
+    }
 
-    //http://localhost:8081/ pour test dans postman
-    @RequestMapping(method = RequestMethod.PUT) //put pour update 
-    public Makeup updateProduit(@RequestBody Makeup makeup) {
-    return makeupService.updateMakeup(makeup);
-}
+    @DeleteMapping("/deletemakeup/{id}")
+    public void deleteMakeup(@PathVariable("id") Long id) {
+        makeupService.deleteMakeupById(id);
+    }
 
-
-
-
-//dans postman http://localhost:8081/2
-@RequestMapping(value="/{id}",method = RequestMethod.DELETE)
-    //@DeleteMapping({"/api/{id}", "/api/{id}/"})
-    public void deleteProduit(@PathVariable("id") Long id){
-    makeupService.deleteMakeupById(id);
-}
-
-
-//afficher makeups selon leurs idcat
-@RequestMapping(value="/prodscat/{idCat}",method = RequestMethod.GET)
-public List<Makeup> getMakeupsByCatId(@PathVariable("idCat") Long idCat) {
-return makeupService.findByCategorieIdCat(idCat);
-
-}
-
-
-
-
-
-
-
-
+    @GetMapping("/getmakeupbymarque/{idMarque}")
+    public List<Makeup> getMakeupsByMarqueId(@PathVariable("idMarque") Long idMarque) {
+        return makeupService.findByMarqueIdMarque(idMarque);
+    }
 }

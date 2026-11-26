@@ -1,16 +1,19 @@
 package com.makeup.service;
 import java.util.List;
 
+import com.makeup.dto.MakeupDTO;
 import com.makeup.entities.Makeup;
 import com.makeup.entities.Marque;
 
 public interface MakeupService {
-    Makeup saveMakeup(Makeup p);
-    Makeup updateMakeup(Makeup p);
+    MakeupDTO saveMakeup(MakeupDTO p);
+    MakeupDTO updateMakeup(MakeupDTO p);
     void deleteMakeup(Makeup p);
     void deleteMakeupById(Long id);
-    Makeup getMakeup(Long id);
-    List<Makeup> getAllMakeups();
+    MakeupDTO getMakeup(Long id);
+    List<MakeupDTO> getAllMakeups();
+    MakeupDTO convertEntityToDto(Makeup makeup);
+    Makeup convertDtoToEntity(MakeupDTO makeupDto);
 
 
     List<Makeup> findByNomMakeup(String nom);

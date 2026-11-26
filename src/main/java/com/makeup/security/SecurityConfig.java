@@ -37,12 +37,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/login", "/register/**", "/verifyEmail/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/register", "/api/auth/register",
+                                "/api/auth/verifyEmail", "/api/auth/resendCode").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/allmakeups").hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/api/getmakeup/**").hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/api/getmakeupbyname/**").hasAnyAuthority("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/api/getmakeupbymarque/**").hasAnyAuthority("ADMIN", "USER")
+                        .requestMatchers("/api/image/**").permitAll()
                         //.requestMatchers(HttpMethod.POST, "/api/addmakeup").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/updatemakeup").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/deletemakeup/**").hasAuthority("ADMIN")
@@ -75,7 +78,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setExposedHeaders(List.of("Authorization"));
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

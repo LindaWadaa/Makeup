@@ -29,10 +29,13 @@ public class MyUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole()))
                 .toList();
-        return org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
-                .password(user.getPassword())
-                .disabled(!user.isEnabled())
-                .authorities(authorities)
-                .build();
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                user.getEnabled(),
+                true,
+                true,
+                true,
+                authorities);
     }
 }

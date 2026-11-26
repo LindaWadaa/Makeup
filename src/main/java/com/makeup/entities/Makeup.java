@@ -1,6 +1,7 @@
 package com.makeup.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Makeup {
@@ -25,6 +28,15 @@ public class Makeup {
     @JoinColumn(name = "marque_id")
     private Marque marque;
 
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
+
+    @OneToMany(mappedBy = "makeup")
+    private List<Image> images;
+
+    private String imagePath;
+
     public Makeup() {
     }
 
@@ -39,6 +51,10 @@ public class Makeup {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNom() {
@@ -79,6 +95,30 @@ public class Makeup {
 
     public void setDateExpiration(LocalDate dateExpiration) {
         this.dateExpiration = dateExpiration;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     @Override

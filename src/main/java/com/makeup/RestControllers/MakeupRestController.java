@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.makeup.dto.MakeupDTO;
 import com.makeup.entities.Makeup;
 import com.makeup.service.MakeupService;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
@@ -35,8 +35,8 @@ public class MakeupRestController {
         return "Makeup API is running";
     }
 
-    @GetMapping("/allmakeups")
-    public List<Makeup> getAllMakeups() {
+    @RequestMapping(path = "/allmakeups", method = RequestMethod.GET)
+    public List<MakeupDTO> getAllMakeups() {
         return makeupService.getAllMakeups();
     }
 
@@ -45,28 +45,20 @@ public class MakeupRestController {
         return makeupService.findByNomMakeupContains(nom);
     }
 
-    @GetMapping("/getmakeup/{id}")
-    public Makeup getMakeupById(@PathVariable("id") Long id) {
+    @RequestMapping(value = "/getmakeup/{id}", method = RequestMethod.GET)
+    public MakeupDTO getMakeupById(@PathVariable("id") Long id) {
         return makeupService.getMakeup(id);
     }
 
-
-
-
-
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/addmakeup")
-    public Makeup createMakeup(@RequestBody Makeup makeup) {
-        return makeupService.saveMakeup(makeup);
+    @RequestMapping(path = "/addmakeup", method = RequestMethod.POST)
+    public MakeupDTO createMakeup(@RequestBody MakeupDTO makeupDTO) {
+        return makeupService.saveMakeup(makeupDTO);
     }
 
-
-
-    
-
-    @PutMapping("/updatemakeup")
-    public Makeup updateMakeup(@RequestBody Makeup makeup) {
-        return makeupService.updateMakeup(makeup);
+    @RequestMapping(path = "/updatemakeup", method = RequestMethod.PUT)
+    public MakeupDTO updateMakeup(@RequestBody MakeupDTO makeupDTO) {
+        return makeupService.updateMakeup(makeupDTO);
     }
 
     @DeleteMapping("/deletemakeup/{id}")

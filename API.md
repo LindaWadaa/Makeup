@@ -1,4 +1,4 @@
-# Documentation de l'API Makeup
+﻿# Documentation de l'API Makeup
 
 ## 1. Informations générales
 
@@ -111,6 +111,9 @@ nécessitent un token JWT, sauf `GET /api/health`.
   "price": 25.5,
   "description": "Rouge longue tenue",
   "dateExpiration": "2027-12-31",
+  "image": { "idImage": 1, "name": "rouge.jpg", "type": "image/jpeg" },
+  "images": [],
+  "imagePath": "1.jpg",
   "marque": {
     "id": 2,
     "nom": "Exemple",
@@ -200,7 +203,32 @@ Réponses particulières :
 - `GET`, `PUT` ou `DELETE` sur une marque inexistante : `404 Not Found`
 - `DELETE` réussi : `204 No Content`
 
-## 5. Endpoints Spring Data REST générés automatiquement
+## 5. Services d'images (TP Gestion des images)
+
+Routes préfixées par `http://localhost:8081/api/image`. Actuellement `permitAll` dans la config de sécurité pour faciliter les tests.
+
+| Méthode | URL complète | Fonction | Rôle requis | Méthode Java |
+|---|---|---|---:|---|
+| `POST` | `http://localhost:8081/api/image/upload` | Upload image (BDD) | Public (config actuelle) | `uploadImage()` |
+| `GET` | `http://localhost:8081/api/image/get/info/{id}` | Détails image (id, name, type, bytes base64) | Public | `getImageDetails()` |
+| `GET` | `http://localhost:8081/api/image/load/{id}` | Charger bytes image | Public | `getImage()` |
+| `DELETE` | `http://localhost:8081/api/image/delete/{id}` | Supprimer image BDD | Public | `deleteImage()` |
+| `POST` | `http://localhost:8081/api/image/uplaodImageProd/{idProd}` | Upload image liée à un makeup | Public | `uploadMultiImages()` |
+| `GET` | `http://localhost:8081/api/image/getImagesProd/{idProd}` | Lister images d'un makeup | Public | `getImagesProd()` |
+| `POST` | `http://localhost:8081/api/image/uploadFS/{id}` | Upload image dans dossier FS (`~/images/{id}.jpg`) | Public | `uploadImageFS()` |
+| `GET` | `http://localhost:8081/api/image/loadfromFS/{id}` | Charger image depuis FS | Public | `getImageFS()` |
+
+### Format Image (réponse `/upload`, `/get/info/{id}`)
+```json
+{
+  "idImage": 1,
+  "name": "rouge.jpg",
+  "type": "image/jpeg",
+  "image": "<bytes/base64 selon sérialisation>"
+}
+```
+
+## 6. Endpoints Spring Data REST générés automatiquement
 
 Le projet utilise aussi Spring Data REST. Ces routes sont distinctes des
 contrôleurs `/api` et sont préfixées par `/makeup`. Les lectures nécessitent
@@ -243,7 +271,7 @@ Les routes `/api/marque/*` sont les routes métier recommandées pour manipuler
 les marques. Les routes `/makeup/*` sont exposées automatiquement par
 Spring Data REST.
 
-## 6. Scénario de test sans erreur
+## 7. Scénario de test sans erreur
 
 Prérequis : le serveur tourne sur `http://localhost:8081` et MySQL est démarré.
 
@@ -345,7 +373,116 @@ Se connecter avec `linda/123`, puis :
 - `GET http://localhost:8081/api/allmakeups` → `200 OK`
 - `POST http://localhost:8081/api/addmakeup` → `403 Forbidden`
 
-## 7. Codes HTTP courants
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 8. Tests Postman - Gestion des images (TP)
+
+Prérequis : backend redémarré sur `8081`, MySQL démarré, migration `V4__add_makeup_images.sql` appliquée. Prépare 2 images locales (ex. `rouge.jpg`, `palette.png`).
+
+### 8.1 Upload image en BDD
+- **Method**: `POST`
+- **URL**: `http://localhost:8081/api/image/upload`
+- **Auth**: none (ou Bearer token, endpoint public)
+- **Body**: `form-data`
+  - key `image` (type **File**) = sélectionner `rouge.jpg`
+- **Attendu**: `200 OK`, JSON avec `idImage`, `name`, `type`, `image`. Noter `idImage`.
+
+### 8.2 Détails image
+- **Method**: `GET`
+- **URL**: `http://localhost:8081/api/image/get/info/<idImage>`
+- **Attendu**: `200 OK`, mêmes métadonnées + bytes.
+
+### 8.3 Charger image brute
+- **Method**: `GET`
+- **URL**: `http://localhost:8081/api/image/load/<idImage>`
+- **Attendu**: `200 OK`, body binaire image (dans Postman, cliquer “Save Response > Save to a file” pour vérifier).
+
+### 8.4 Créer un makeup avec image (flux TP)
+1. Créer marque/makeup ou réutiliser un `idMakeup` existant.
+2. Upload image:
+   - `POST http://localhost:8081/api/image/upload` (form-data `image`)
+   - noter `idImage`.
+3. Associer au makeup:
+   - **Method**: `PUT`
+   - **URL**: `http://localhost:8081/api/updatemakeup`
+   - **Headers**: `Authorization: Bearer <token_admin>`, `Content-Type: application/json`
+   - **Body**:
+```json
+{
+  "id": <idMakeup>,
+  "nom": "Rouge Test",
+  "price": 29.9,
+  "description": "Rouge longue tenue",
+  "dateExpiration": "2027-12-31",
+  "marque": {"id": <idMarque>},
+  "image": {"idImage": <idImage>}
+}
+```
+- **Attendu**: `200 OK`, makeup retourné avec `image.idImage`.
+
+### 8.5 Modifier l'image d'un makeup
+1. Upload nouvelle image via `/api/image/upload` -> `newIdImage`.
+2. `PUT /api/updatemakeup` avec `"image":{"idImage": <newIdImage>}`.
+3. **Attendu**: makeup mis à jour; ancienne image supprimée de la table `image` (vérifier avec `GET /api/image/get/info/<oldIdImage>` -> erreur/absent selon gestion).
+
+### 8.6 Plusieurs images par makeup
+- **Upload image liée**:
+  - `POST http://localhost:8081/api/image/uplaodImageProd/<idMakeup>`
+  - Body form-data: `image` (File) = `palette.png`
+  - Attendu: `200 OK`, Image avec `idImage`.
+- **Lister images du makeup**:
+  - `GET http://localhost:8081/api/image/getImagesProd/<idMakeup>`
+  - Attendu: `200 OK`, tableau d'images.
+- **Supprimer une image**:
+  - `DELETE http://localhost:8081/api/image/delete/<idImage>`
+  - Attendu: `200 OK`/succès sans body; l'image ne doit plus apparaître dans la liste.
+
+### 8.7 Stockage fichier système (FS)
+- **Upload FS**:
+  - `POST http://localhost:8081/api/image/uploadFS/<idMakeup>`
+  - Body form-data: `image` (File) = `rouge.jpg`
+  - Attendu: `200 OK`. Fichier créé: `C:\Users\<user>\images\<idMakeup>.jpg` (ou `%USERPROFILE%\images\...`).
+- **Lire FS**:
+  - `GET http://localhost:8081/api/image/loadfromFS/<idMakeup>`
+  - Attendu: `200 OK`, image JPEG.
+- **Vérifier imagePath**:
+  - `GET http://localhost:8081/api/getmakeup/<idMakeup>` avec token admin/user.
+  - Attendu: champ `imagePath` = `<idMakeup>.jpg`.
+
+### 8.8 Scénario Postman complet images
+1. `POST /login` admin -> token.
+2. `POST /api/marque/add` -> `idMarque`.
+3. `POST /api/addmakeup` -> `idMakeup`.
+4. `POST /api/image/upload` (file) -> `idImage`.
+5. `PUT /api/updatemakeup` avec `image.idImage`.
+6. `GET /api/getmakeup/{idMakeup}` -> vérifier `image`.
+7. `POST /api/image/uplaodImageProd/{idMakeup}` (autre file).
+8. `GET /api/image/getImagesProd/{idMakeup}`.
+9. `POST /api/image/uploadFS/{idMakeup}`.
+10. `GET /api/image/loadfromFS/{idMakeup}`.
+11. `DELETE /api/image/delete/{idImageMulti}`.
+12. `DELETE /api/deletemakeup/{idMakeup}` -> vérifie aussi suppression du fichier `%USERPROFILE%\images\{idMakeup}.jpg`.
+
+## 9. Codes HTTP courants
 
 | Code | Signification |
 |---|---|
@@ -357,3 +494,79 @@ Se connecter avec `linda/123`, puis :
 | `403 Forbidden` | Token valide mais rôle insuffisant |
 | `404 Not Found` | Ressource inexistante |
 | `409 Conflict` | Conflit, notamment un nom d'utilisateur déjà utilisé |
+| `500 Internal Server Error` | Erreur serveur (ex. id makeup inexistant avec `orElseThrow`) |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 10. Tests Postman - DTO / ModelMapper (TP)
+
+Prérequis : backend redémarré après changements DTO, token ADMIN.
+
+### 10.1 Vérifier DTO sur liste
+- **Method**: GET
+- **URL**: http://localhost:8081/api/allmakeups
+- **Headers**: Authorization: Bearer <token>
+- **Attendu**: 200 OK, tableau d'objets MakeupDTO. Chaque objet contient au minimum id, nom, price, description, dateExpiration, marque, nomMarque. Avec MatchingStrategies.LOOSE,
+omMarque doit correspondre à marque.nom (ex. "nomMarque":"Dior").
+
+### 10.2 Vérifier DTO sur détail
+- **Method**: GET
+- **URL**: http://localhost:8081/api/getmakeup/<idMakeup>
+- **Headers**: Authorization: Bearer <token>
+- **Attendu**: 200 OK, un seul objet DTO avec
+omMarque renseigné.
+
+### 10.3 Créer un makeup via DTO
+- **Method**: POST
+- **URL**: http://localhost:8081/api/addmakeup
+- **Headers**: Authorization: Bearer <token_admin>, Content-Type: application/json
+- **Body**:
+`json
+{
+  "nom": "Gloss DTO",
+  "price": 19.9,
+  "description": "Test DTO",
+  "dateExpiration": "2027-12-31",
+  "marque": { "id": 1 }
+}
+`
+- **Attendu**: 200 OK (ou 201 selon implémentation), corps = MakeupDTO créé avec id généré, marque renseignée,
+omMarque correspondant à la marque.
+
+### 10.4 Modifier un makeup via DTO
+- **Method**: PUT
+- **URL**: http://localhost:8081/api/updatemakeup
+- **Headers**: Authorization: Bearer <token_admin>, Content-Type: application/json
+- **Body**:
+`json
+{
+  "id": <idMakeup>,
+  "nom": "Gloss DTO Modifié",
+  "price": 21.9,
+  "description": "Test DTO update",
+  "dateExpiration": "2027-12-31",
+  "marque": { "id": 1 }
+}
+`
+- **Attendu**: 200 OK, DTO retourné avec les nouvelles valeurs et
+omMarque correct.
+
+### 10.5 Vérifier conversion ModelMapper
+- **Test**: comparer GET /api/getmakeup/{id} avant/après update.
+- **Attendu**: les champs DTO sont mappés depuis l'entité Makeup;
+omMarque provient du nom de la marque liée (LOOSE matching).
+- **Cas négatif**: POST /api/addmakeup avec USER (linda/123) -> 403 Forbidden.
